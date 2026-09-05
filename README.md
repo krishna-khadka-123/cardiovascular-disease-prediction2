@@ -9,14 +9,13 @@ A cardiovascular disease risk assessment web application built using HTML, CSS, 
 
 ### Risk Assessment Interface
 
-![Cardiovascular Disease Risk Assessment](<img width="1662" height="917" alt="Screenshot 2026-09-05 210927" src="https://github.com/user-attachments/assets/20e89811-5abe-4c81-92a1-cfc9e500aae7" />
-)
+ <img width="1662" height="917" alt="Screenshot 2026-09-05 210927" src="https://github.com/user-attachments/assets/20e89811-5abe-4c81-92a1-cfc9e500aae7" 
+ 
 
 ### Model Results
 
-![Model Results](![Uploading Screenshot 2026-09-05 211405.png…]( <img width="1792" height="903" alt="Screenshot 2026-09-05 211405" src="https://github.com/user-attachments/assets/08c3fce0-bbbb-4373-9d07-9e57d00441b7" />
-)
-)
+  <img width="1792" height="903" alt="Screenshot 2026-09-05 211405" src="https://github.com/user-attachments/assets/08c3fce0-bbbb-4373-9d07-9e57d00441b7" />
+ 
 
 ## Features
 
