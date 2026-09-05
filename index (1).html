@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cardiovascular Risk Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EEF2F0;
+    --surface:#FFFFFF;
+    --ink:#152420;
+    --ink-soft:#4B5A54;
+    --hairline:#D7DFDA;
+    --hairline-soft:#E6ECE8;
+    --teal:#1F5C4E;
+    --teal-deep:#123B31;
+    --risk-high:#A2402E;
+    --risk-high-bg:#F7E9E5;
+    --risk-low:#3C7A54;
+    --risk-low-bg:#E8F1E9;
+    --blue-0:#EAF1F7;
+    --blue-1:#B9D2E4;
+    --blue-2:#7BA6C6;
+    --blue-3:#3E6E96;
+    --blue-4:#1E4260;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0;
+    padding:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  h1,h2,h3,.serif{
+    font-family:'Source Serif 4', serif;
+    font-weight:600;
+    color:var(--ink);
+    margin:0;
+  }
+
+  a{ color:inherit; }
+
+  .app{
+    max-width:1180px;
+    margin:0 auto;
+    padding:40px 28px 80px;
+  }
+
+  .masthead{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    padding-bottom:28px;
+    margin-bottom:32px;
+    border-bottom:1px solid var(--hairline);
+  }
+
+  .masthead .kicker{
+    font-size:14px;
+    color:var(--teal);
+    font-weight:600;
+  }
+
+  .masthead h1{
+    font-size:clamp(28px, 4vw, 40px);
+    line-height:1.15;
+    max-width:20ch;
+  }
+
+  .masthead p{
+    margin:6px 0 0;
+    max-width:56ch;
+    color:var(--ink-soft);
+    font-size:15.5px;
+    line-height:1.55;
+  }
+
+  .layout{
+    display:grid;
+    grid-template-columns:340px 1fr;
+    gap:28px;
+    align-items:start;
+  }
+
+  @media (max-width: 900px){
+    .layout{ grid-template-columns:1fr; }
+  }
+
+  /* ---------- Panel (form) ---------- */
+
+  .panel{
+    background:var(--surface);
+    border:1px solid var(--hairline);
+    border-radius:4px;
+    padding:26px 24px 24px;
+    position:sticky;
+    top:24px;
+  }
+
+  @media (max-width: 900px){
+    .panel{ position:static; }
+  }
+
+  .panel h2{
+    font-size:19px;
+    margin-bottom:4px;
+  }
+
+  .panel .panel-sub{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-bottom:22px;
+  }
+
+  .field{
+    margin-bottom:20px;
+  }
+
+  .field:last-of-type{
+    margin-bottom:0;
+  }
+
+  .field-label{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--ink);
+    margin-bottom:9px;
+  }
+
+  .field-label .value{
+    font-family:'Source Serif 4', serif;
+    font-weight:600;
+    color:var(--teal);
+    font-size:14.5px;
+  }
+
+  input[type="range"]{
+    -webkit-appearance:none;
+    width:100%;
+    height:4px;
+    border-radius:2px;
+    background:var(--hairline);
+    outline:none;
+    margin:0;
+  }
+
+  input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    background:var(--teal);
+    border:2px solid #fff;
+    box-shadow:0 0 0 1px var(--teal);
+    cursor:pointer;
+    margin-top:-6px;
+  }
+
+  input[type="range"]::-moz-range-thumb{
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    background:var(--teal);
+    border:2px solid #fff;
+    box-shadow:0 0 0 1px var(--teal);
+    cursor:pointer;
+  }
+
+  input[type="range"]::-moz-range-track{
+    height:4px;
+    border-radius:2px;
+    background:var(--hairline);
+  }
+
+  select{
+    width:100%;
+    padding:9px 10px;
+    border:1px solid var(--hairline);
+    border-radius:3px;
+    background:var(--surface);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    font-size:14px;
+  }
+
+  .pillrow{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+  }
+
+  .pill{
+    flex:1 1 auto;
+    text-align:center;
+    padding:7px 8px;
+    border:1px solid var(--hairline);
+    border-radius:20px;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    cursor:pointer;
+    user-select:none;
+    transition:background .12s ease, color .12s ease, border-color .12s ease;
+    white-space:nowrap;
+  }
+
+  .pill.active{
+    background:var(--teal);
+    border-color:var(--teal);
+    color:#fff;
+  }
+
+  .divider{
+    border:none;
+    border-top:1px solid var(--hairline-soft);
+    margin:22px 0;
+  }
+
+  .assess-btn{
+    width:100%;
+    margin-top:24px;
+    padding:13px 16px;
+    background:var(--teal-deep);
+    color:#fff;
+    border:none;
+    border-radius:3px;
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size:14.5px;
+    cursor:pointer;
+    transition:background .15s ease;
+  }
+
+  .assess-btn:hover{ background:var(--teal); }
+
+  /* ---------- Main / results ---------- */
+
+  .main-col{
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+  }
+
+  .result-card{
+    background:var(--surface);
+    border:1px solid var(--hairline);
+    border-radius:4px;
+    padding:32px;
+    display:grid;
+    grid-template-columns:auto 1fr;
+    gap:32px;
+    align-items:center;
+  }
+
+  @media (max-width: 620px){
+    .result-card{ grid-template-columns:1fr; text-align:center; justify-items:center; }
+  }
+
+  .gauge-wrap{ position:relative; width:150px; height:150px; }
+
+  .gauge-wrap svg{ transform:rotate(-90deg); }
+
+  .gauge-track{ fill:none; stroke:var(--hairline-soft); stroke-width:10; }
+  .gauge-value{ fill:none; stroke-width:10; stroke-linecap:round; transition:stroke-dasharray .5s ease, stroke .3s ease; }
+
+  .gauge-center{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .gauge-center .pct{
+    font-family:'Source Serif 4', serif;
+    font-weight:700;
+    font-size:30px;
+    line-height:1;
+  }
+
+  .gauge-center .pct-label{
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-top:4px;
+  }
+
+  .result-text .status{
+    display:inline-block;
+    padding:4px 12px;
+    border-radius:20px;
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:10px;
+  }
+
+  .status.low{ background:var(--risk-low-bg); color:var(--risk-low); }
+  .status.high{ background:var(--risk-high-bg); color:var(--risk-high); }
+  .status.pending{ background:var(--hairline-soft); color:var(--ink-soft); }
+
+  .result-text h3{
+    font-size:22px;
+    margin-bottom:8px;
+  }
+
+  .result-text p{
+    margin:0;
+    color:var(--ink-soft);
+    font-size:14.5px;
+    line-height:1.6;
+    max-width:52ch;
+  }
+
+  .section-heading{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom:14px;
+  }
+
+  .section-heading h2{ font-size:19px; }
+  .section-heading .note{ font-size:12.5px; color:var(--ink-soft); }
+
+  .metrics-grid{
+    display:grid;
+    grid-template-columns:220px 1fr;
+    gap:24px;
+  }
+
+  @media (max-width: 760px){
+    .metrics-grid{ grid-template-columns:1fr; }
+  }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--hairline);
+    border-radius:4px;
+    padding:24px;
+  }
+
+  .cm-table{
+    border-collapse:collapse;
+    width:100%;
+    table-layout:fixed;
+    font-size:13px;
+  }
+
+  .cm-table col.cm-label-col{ width:76px; }
+
+  .cm-table th{
+    font-weight:600;
+    font-size:11px;
+    line-height:1.3;
+    color:var(--ink-soft);
+    padding:6px 4px;
+    text-align:center;
+    word-wrap:break-word;
+    overflow-wrap:break-word;
+  }
+
+  .cm-table th.cm-row-th{
+    text-align:left;
+    white-space:normal;
+  }
+
+  .cm-table td{
+    text-align:center;
+    padding:16px 4px;
+    font-family:'Source Serif 4', serif;
+    font-weight:600;
+    font-size:19px;
+    border-radius:3px;
+  }
+
+  .cm-axis-label{
+    font-size:11px;
+    color:var(--ink-soft);
+    text-align:center;
+    margin-top:10px;
+  }
+
+  .report-table{
+    border-collapse:collapse;
+    width:100%;
+    font-size:13.5px;
+  }
+
+  .report-table th{
+    text-align:right;
+    font-size:11.5px;
+    font-weight:600;
+    color:var(--ink-soft);
+    padding:8px 10px;
+    border-bottom:1px solid var(--hairline);
+  }
+
+  .report-table th:first-child, .report-table td:first-child{
+    text-align:left;
+  }
+
+  .report-table td{
+    text-align:right;
+    padding:9px 10px;
+    border-bottom:1px solid var(--hairline-soft);
+  }
+
+  .report-table tr:last-child td{ border-bottom:none; }
+
+  .report-table td:first-child{
+    font-weight:600;
+  }
+
+  .report-table tr.accent td:first-child{
+    color:var(--teal);
+  }
+
+  .foot-note{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    line-height:1.6;
+    padding-top:8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="masthead">
+    <span class="kicker">Risk modeling demo</span>
+    <h1>Cardiovascular disease risk assessment</h1>
+    <p>Adjust the intake fields to see how a logistic regression model — trained on lifestyle and clinical measurements — classifies risk. Prediction runs entirely in your browser.</p>
+  </div>
+
+  <div class="layout">
+
+    <!-- ================= FORM PANEL ================= -->
+    <div class="panel">
+      <h2>Patient intake</h2>
+      <div class="panel-sub">Eleven inputs feed the model.</div>
+
+      <div class="field">
+        <div class="field-label"><span>Age</span><span class="value" id="ageVal">30 yrs</span></div>
+        <input type="range" id="age" min="25" max="70" value="30" step="1">
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span>Gender</span></div>
+        <select id="gender">
+          <option value="1">Female</option>
+          <option value="2">Male</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span>Height</span><span class="value" id="heightVal">170 cm</span></div>
+        <input type="range" id="height" min="50" max="255" value="170" step="1">
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span>Weight</span><span class="value" id="weightVal">70 kg</span></div>
+        <input type="range" id="weight" min="20" max="150" value="70" step="1">
+      </div>
+
+      <hr class="divider">
+
+      <div class="field">
+        <div class="field-label"><span>Systolic blood pressure</span><span class="value" id="apHiVal">120</span></div>
+        <input type="range" id="ap_hi" min="100" max="190" value="120" step="1">
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span>Diastolic blood pressure</span><span class="value" id="apLoVal">60</span></div>
+        <input type="range" id="ap_lo" min="50" max="99" value="60" step="1">
+      </div>
+
+      <hr class="divider">
+
+      <div class="field">
+        <div class="field-label"><span>Cholesterol level</span></div>
+        <div class="pillrow" data-group="cholesterol">
+          <div class="pill active" data-value="1">Normal</div>
+          <div class="pill" data-value="2">Above normal</div>
+          <div class="pill" data-value="3">Well above</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span>Glucose level</span></div>
+        <div class="pillrow" data-group="gluc">
+          <div class="pill active" data-value="1">Normal</div>
+          <div class="pill" data-value="2">Above normal</div>
+          <div class="pill" data-value="3">Well above</div>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="field">
+        <div class="field-label"><span>Smokes</span></div>
+        <div class="pillrow" data-group="smoke">
+          <div class="pill active" data-value="0">No</div>
+          <div class="pill" data-value="1">Yes</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span>Consumes alcohol</span></div>
+        <div class="pillrow" data-group="alco">
+          <div class="pill active" data-value="0">No</div>
+          <div class="pill" data-value="1">Yes</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label"><span>Physically active</span></div>
+        <div class="pillrow" data-group="active">
+          <div class="pill" data-value="0">No</div>
+          <div class="pill active" data-value="1">Yes</div>
+        </div>
+      </div>
+
+      <button class="assess-btn" id="assessBtn">Assess risk</button>
+    </div>
+
+    <!-- ================= MAIN COLUMN ================= -->
+    <div class="main-col">
+
+      <div class="result-card">
+        <div class="gauge-wrap">
+          <svg viewBox="0 0 120 120" width="150" height="150">
+            <circle class="gauge-track" cx="60" cy="60" r="52"></circle>
+            <circle class="gauge-value" id="gaugeArc" cx="60" cy="60" r="52"
+              stroke="#9BA8A2" stroke-dasharray="0 327"></circle>
+          </svg>
+          <div class="gauge-center">
+            <div class="pct" id="gaugePct">—</div>
+            <div class="pct-label">est. probability</div>
+          </div>
+        </div>
+        <div class="result-text">
+          <div class="status pending" id="statusBadge">Awaiting assessment</div>
+          <h3 id="resultHeadline">No prediction yet</h3>
+          <p id="resultBody">Set the fields on the left to match a patient profile, then select "Assess risk" to run the model.</p>
+        </div>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="card">
+          <div class="section-heading"><h2>Confusion matrix</h2></div>
+          <table class="cm-table" id="cmTable"></table>
+          <div class="cm-axis-label">Rows: actual · Columns: predicted</div>
+        </div>
+
+        <div class="card">
+          <div class="section-heading">
+            <h2>Classification report</h2>
+            <span class="note" id="accNote"></span>
+          </div>
+          <table class="report-table" id="reportTable"></table>
+        </div>
+      </div>
+
+      <div class="foot-note">
+        Trained with a StandardScaler + LogisticRegression pipeline (balanced class weights). This demo instance is fit on a synthetic dataset built to mirror realistic cardiovascular risk relationships — swap in <code>model_params.json</code> from <code>export_model.py</code> run against real patient data for production use. Not a diagnostic tool.
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ---------------------------------------------------------------
+// Embedded model parameters (trained via scikit-learn, see export_model.py)
+// ---------------------------------------------------------------
+const MODEL = {"features": ["age", "gender", "height", "weight", "ap_hi", "ap_lo", "cholesterol", "gluc", "smoke", "alco", "active"], "scaler_mean": [46.288060550254365, 1.3504166666666666, 164.8568541666667, 71.11741666666666, 124.89395833333333, 77.30166666666666, 1.5060416666666667, 1.2052083333333334, 0.1525, 0.09916666666666667, 0.795], "scaler_scale": [10.679698387273692, 0.4771004363746578, 8.201752791552098, 14.16646541989411, 13.575169004408892, 9.747170387120335, 0.731411989417653, 0.5293214586593125, 0.35950486783908786, 0.2988856618991431, 0.403701622488689], "coef": [0.5239157601425029, 0.04713274026661572, -0.00361565874820537, 0.43436797511534847, 0.6600242282752273, 0.15772401259883637, 0.33696894017180457, 0.14214531892549878, 0.10866070395560427, 0.02029501594144674, -0.26881534915699545], "intercept": -0.12859047279486432, "classification_report": {"0": {"precision": 0.802731411229135, "recall": 0.7471751412429378, "f1-score": 0.7739575713240673, "support": 708.0}, "1": {"precision": 0.6691312384473198, "recall": 0.7357723577235772, "f1-score": 0.7008712487899322, "support": 492.0}, "accuracy": 0.7425, "macro avg": {"precision": 0.7359313248382274, "recall": 0.7414737494832575, "f1-score": 0.7374144100569997, "support": 1200.0}, "weighted avg": {"precision": 0.7479553403885908, "recall": 0.7425, "f1-score": 0.743992179085072, "support": 1200.0}}, "confusion_matrix": [[529, 179], [130, 362]], "accuracy": 0.7425};
+
+// ---------------------------------------------------------------
+// Form state + interactivity
+// ---------------------------------------------------------------
+const state = {
+  age: 30, gender: 1, height: 170, weight: 70,
+  ap_hi: 120, ap_lo: 60,
+  cholesterol: 1, gluc: 1,
+  smoke: 0, alco: 0, active: 1
+};
+
+function bindSlider(id, key, suffix){
+  const el = document.getElementById(id);
+  const label = document.getElementById(id.replace(/_hi|_lo/,'') + 'Val') || document.getElementById(key + 'Val');
+  el.addEventListener('input', () => {
+    state[key] = Number(el.value);
+    updateLabel(id, key, suffix);
+  });
+}
+
+function updateLabel(id, key, suffix){
+  const map = {age:'ageVal', height:'heightVal', weight:'weightVal', ap_hi:'apHiVal', ap_lo:'apLoVal'};
+  const labelEl = document.getElementById(map[key]);
+  if(labelEl) labelEl.textContent = state[key] + (suffix || '');
+}
+
+bindSlider('age','age',' yrs');
+bindSlider('height','height',' cm');
+bindSlider('weight','weight',' kg');
+bindSlider('ap_hi','ap_hi','');
+bindSlider('ap_lo','ap_lo','');
+
+document.getElementById('gender').addEventListener('change', (e) => {
+  state.gender = Number(e.target.value);
+});
+
+document.querySelectorAll('.pillrow').forEach(row => {
+  const group = row.dataset.group;
+  row.querySelectorAll('.pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      row.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      state[group] = Number(pill.dataset.value);
+    });
+  });
+});
+
+// ---------------------------------------------------------------
+// Prediction: standardize -> dot with coefficients -> sigmoid
+// ---------------------------------------------------------------
+function sigmoid(z){ return 1 / (1 + Math.exp(-z)); }
+
+function predict(){
+  const x = MODEL.features.map(f => state[f]);
+  let z = MODEL.intercept;
+  for(let i = 0; i < x.length; i++){
+    const scaled = (x[i] - MODEL.scaler_mean[i]) / MODEL.scaler_scale[i];
+    z += scaled * MODEL.coef[i];
+  }
+  return sigmoid(z);
+}
+
+const CIRC = 2 * Math.PI * 52; // ~326.7
+
+function renderResult(prob){
+  const pct = Math.round(prob * 100);
+  const isHigh = prob >= 0.5;
+
+  document.getElementById('gaugePct').textContent = pct + '%';
+  const arc = document.getElementById('gaugeArc');
+  const filled = (pct / 100) * CIRC;
+  arc.setAttribute('stroke-dasharray', filled.toFixed(1) + ' ' + CIRC.toFixed(1));
+  arc.setAttribute('stroke', isHigh ? '#A2402E' : '#3C7A54');
+
+  const badge = document.getElementById('statusBadge');
+  badge.className = 'status ' + (isHigh ? 'high' : 'low');
+  badge.textContent = isHigh ? 'Elevated risk' : 'Lower risk';
+
+  document.getElementById('resultHeadline').textContent =
+    isHigh ? 'Cardiovascular disease likely' : 'No cardiovascular disease indicated';
+
+  document.getElementById('resultBody').textContent = isHigh
+    ? 'Based on the entered profile, the model estimates a probability of ' + pct + '% for cardiovascular disease — above the 50% decision threshold.'
+    : 'Based on the entered profile, the model estimates a probability of ' + pct + '% for cardiovascular disease — below the 50% decision threshold.';
+}
+
+document.getElementById('assessBtn').addEventListener('click', () => {
+  const prob = predict();
+  renderResult(prob);
+});
+
+// ---------------------------------------------------------------
+// Confusion matrix (seaborn "Blues"-style heatmap, built with CSS)
+// ---------------------------------------------------------------
+function blueFor(v, max){
+  const stops = ['#EAF1F7', '#B9D2E4', '#7BA6C6', '#3E6E96', '#1E4260'];
+  const t = max === 0 ? 0 : v / max;
+  const idx = Math.min(stops.length - 1, Math.round(t * (stops.length - 1)));
+  return stops[idx];
+}
+
+function textColorFor(bg){
+  return ['#1E4260','#3E6E96'].includes(bg) ? '#fff' : '#152420';
+}
+
+function renderConfusionMatrix(){
+  const cm = MODEL.confusion_matrix;
+  const max = Math.max(...cm.flat());
+  const tbl = document.getElementById('cmTable');
+
+  let html = '<colgroup><col class="cm-label-col"><col><col></colgroup>';
+  html += '<tr><th></th><th>No disease</th><th>Disease</th></tr>';
+  const rowLabels = ['No disease', 'Disease'];
+  cm.forEach((row, i) => {
+    html += '<tr><th class="cm-row-th">' + rowLabels[i] + '</th>';
+    row.forEach(v => {
+      const bg = blueFor(v, max);
+      html += '<td style="background:' + bg + ';color:' + textColorFor(bg) + ';">' + v + '</td>';
+    });
+    html += '</tr>';
+  });
+  tbl.innerHTML = html;
+}
+
+// ---------------------------------------------------------------
+// Classification report table
+// ---------------------------------------------------------------
+function renderReport(){
+  const cr = MODEL.classification_report;
+  document.getElementById('accNote').textContent = 'Accuracy ' + (cr.accuracy * 100).toFixed(1) + '%';
+
+  const rowsOrder = [
+    ['0', 'No disease'],
+    ['1', 'Disease'],
+    ['macro avg', 'Macro avg'],
+    ['weighted avg', 'Weighted avg']
+  ];
+
+  let html = '<tr><th>Class</th><th>Precision</th><th>Recall</th><th>F1</th><th>Support</th></tr>';
+  rowsOrder.forEach(([key, label]) => {
+    const r = cr[key];
+    html += '<tr' + (key === '0' || key === '1' ? ' class="accent"' : '') + '>' +
+      '<td>' + label + '</td>' +
+      '<td>' + r.precision.toFixed(2) + '</td>' +
+      '<td>' + r.recall.toFixed(2) + '</td>' +
+      '<td>' + r['f1-score'].toFixed(2) + '</td>' +
+      '<td>' + r.support.toFixed(0) + '</td>' +
+      '</tr>';
+  });
+  document.getElementById('reportTable').innerHTML = html;
+}
+
+renderConfusionMatrix();
+renderReport();
+</script>
+</body>
+</html>
